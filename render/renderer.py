@@ -7,9 +7,11 @@ import asyncio
 from pyppeteer import launch
 from pathlib import Path
 import pathlib
+from PIL import Image
 
 class Renderer:
     resolution = (1200,800)
+    treshold = 87
     
     @property
     def handle(self):
@@ -49,13 +51,17 @@ class Renderer:
 
     def render_html_to_image(self, html_path, output_path):
         html_path = pathlib.Path(html_path).resolve()  # Absoluter Pfad
+        resolution = [
+            self.resolution[0],
+            self.resolution[1] + self.treshold
+        ]
         subprocess.run([
             "/snap/bin/chromium",
             "--headless",
             "--disable-gpu",
             "--no-sandbox",
             "--run-all-compositor-stages-before-draw",
-            f"--window-size={','.join(map(str,self.resolution))}",
+            f"--window-size={','.join(map(str,resolution))}",
             f"--screenshot={output_path}",
             # "--virtual-time-budget=1000",
             f"file://{html_path}"
@@ -65,5 +71,7 @@ class Renderer:
     def render_image(self):
         self.build_html()
         self.render_html_to_image(self.html_file, self.image_file)
-
+        image = Image.open(self.image_file)
+        image_cropped = image.crop((0, 0, self.resolution[0], self.resolution[1]))
+        image_cropped.save(self.image_file)
         # subprocess.run(["python3", "renderer.py", 'static/wortuhr.html', 'static/wortuhr.png'])
