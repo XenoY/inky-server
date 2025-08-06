@@ -1,11 +1,8 @@
 from flask import Flask, send_file
-from renders import render_calendar, build_html
 from render.wortuhr import Wortuhr
 from render.calendar import Calendar
 
 app = Flask(__name__)
-
-
 
 @app.route('/image/calendar')
 def get_calendar():
@@ -19,7 +16,6 @@ def view_calendar():
     calendar.build_html()
     return send_file(calendar.html_file)
 
-    
 @app.route('/image/wortuhr')
 def get_wortuhr():
     wortuhr = Wortuhr()
