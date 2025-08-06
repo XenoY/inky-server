@@ -1,0 +1,5 @@
+.env
+conf.json
+venv
+**/__pycache__
+static

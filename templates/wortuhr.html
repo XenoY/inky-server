@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+<style>
+    html, body{
+        border: none;
+        padding: 0;
+        margin: 0;
+        width: {{width}}px;
+        height: {{height}}px;
+        overflow: hidden;
+    }
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: {{background}};
+    }
+
+    .clock {
+        padding: 50px;
+        font-family: monospace;
+        font-size: 40px;
+        letter-spacing: 20px;
+        color: rgba(255, 255, 255, 0.4);
+        text-align: center;
+        transition: .5s;
+    }
+    .lit:not(.green), .always-lit {
+        color: white;
+        text-shadow: 0 0 7px white;
+    }
+    .green.lit {
+        color: rgb(121, 222, 141);
+        text-shadow: 0 0 7px rgb(147, 250, 115);
+    }
+</style>
+</head>
+<html>
+    <body>
+        <div class="clock">
+            <span class="always-lit">ES</span>K<span class="always-lit">ISCH</span>A<span class="minute-5 minute-25 minute-35 minute-55">FÜF</span><br>
+            <span class="minute-15 minute-45">VIERTU</span>BF<span class="minute-10 minute-50">ZÄÄ</span><br>
+            <span class="minute-20 minute-40">ZWÄNZG</span>SI<span class="minute-25 minute-40 minute-45 minute-50 minute-55">VOR</span><br>
+            <span class="minute-5 minute-10 minute-15 minute-20 minute-35">AB</span>P<span class="green">GO</span><span class="minute-25 minute-30 minute-35">HAUBI</span>M<br>
+            <span class="hour-1 hour-13">EIS</span><span class="hour-2 hour-14">ZWÖI</span>S<span class="hour-3 hour-15">DRÜ</span><br>
+            <span class="hour-4 hour-16">VIERI</span><span class="green">VEGAN</span>S<br>
+            <span class="hour-5 hour-17">FÜFI</span>Q<span class="hour-6 hour-18">SÄCHSI</span><br>
+            <span class="hour-7 hour-19">SIBNI</span>X<span class="hour-8 hour-20">ACHTI</span><br>
+            <span class="hour-9 hour-21">NÜNI</span>EOD<span class="hour-10 hour-22">ZÄNI</span><br>
+            <span class="hour-11 hour-23">EUFI</span>S<span class="hour-12 hour-0">ZWÖUFI</span><br>
+        </div>
+    <script>
+        setTime()
+        function setTime() {
+            let date = new Date()
+            let hour = date.getHours()
+            const minutes = date.getMinutes()
+            const closestMinute = Math.floor(minutes / 5) * 5
+            
+            if (closestMinute >= 25) {
+                hour = (hour + 1)%24
+            }
+
+            const currentLit = document.querySelectorAll(".lit")
+            currentLit.forEach(each => each.classList.remove("lit"))
+    
+            document.querySelectorAll(`.hour-${ hour}`).forEach(each => each.classList.add("lit"))
+            document.querySelectorAll(`.minute-${closestMinute}`).forEach(each => each.classList.add("lit"))
+            
+            // todo get exact time 
+            if (Math.random() < 0.2 && ![4, 16].includes(hour)) {
+                document.querySelectorAll('.green').forEach(each => each.classList.add("lit"))
+            }
+            const timeout = getTimeout()
+            setTimeout(setTime, timeout)
+        }
+
+        function getTimeout() {
+            const now = new Date()
+            
+            // Aktuelle Minuten und Sekunden
+            const minutes = now.getMinutes()
+            const seconds = now.getSeconds()
+            const milliseconds = now.getMilliseconds()
+            
+            // Nächstes 5-Minuten Intervall
+            const nextFiveMinute = Math.ceil((minutes + 0.0001) / 5) * 5
+
+            // Neues Datum-Objekt, das auf dem nächsten 5-Minuten Punkt steht
+            const next = new Date(now)
+            next.setMinutes(nextFiveMinute)
+            next.setSeconds(0)
+            next.setMilliseconds(0)
+
+            // Falls nextFiveMinute >= 60, wird die Stunde automatisch hochgezählt
+            // durch setMinutes(nextFiveMinute), das ist korrekt
+
+            const delay = next.getTime() - now.getTime()
+            return delay
+        }
+    </script>
+</body>
+</html>
